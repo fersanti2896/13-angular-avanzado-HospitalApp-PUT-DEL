@@ -70,15 +70,36 @@ const putHospital = async(req, res = response) => {
             msg: 'Error inesperado, revisar logs!'
         })
     }
-
-    
 }
 
-const deleteHospital = (req, res = response) => {
-    res.status(200).json({
-        ok: true,
-        msg: 'Eliminar Hospital'
-    });
+const deleteHospital = async(req, res = response) => {
+    const id = req.params.id;
+
+    try {
+        const hospital = await Hospital.findById( id );
+
+        if( !hospital ) {
+           return res.status(404).json({
+                ok: false,
+                msg: 'Hospital no encontrado dado el id!'
+            });
+        }
+
+        /* Eliminado el hospital, se manda id, el objeto actualizado y el que mostrara como respuesta*/
+        await Hospital.findByIdAndDelete( id );
+
+        res.status(200).json({
+            ok: true,
+            msg: 'Hospital eliminado!'
+        });
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, revisar logs!'
+        })
+    }
 }
 
 module.exports = {

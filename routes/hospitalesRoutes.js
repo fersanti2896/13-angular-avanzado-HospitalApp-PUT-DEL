@@ -28,6 +28,6 @@ router.put( '/:id', [
 ], putHospital );
 
 /* DELETE: Ruta */
-router.delete( '/:id', deleteHospital );
+router.delete( '/:id', validarJWT, deleteHospital );
 
 module.exports = router;
