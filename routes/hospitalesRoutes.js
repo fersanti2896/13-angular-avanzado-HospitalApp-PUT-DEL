@@ -21,7 +21,11 @@ router.post( '/', [
 ], postHospital );
 
 /* PUT: Ruta | Controlador */
-router.put( '/:id', [], putHospital );
+router.put( '/:id', [
+    validarJWT,
+    check('nombre', 'El nombre del hospital es necesario!').not().isEmpty(),
+    validarCampos
+], putHospital );
 
 /* DELETE: Ruta */
 router.delete( '/:id', deleteHospital );

@@ -19,7 +19,6 @@ const postHospital = async(req, res = response) => {
     });
     
     try {
-
         const hospitalDB = await hospital.save();
 
         res.status(200).json({
@@ -36,11 +35,43 @@ const postHospital = async(req, res = response) => {
     }
 }
 
-const putHospital = (req, res = response) => {
-    res.status(200).json({
-        ok: true,
-        msg: 'Actualizar Hospital'
-    });
+const putHospital = async(req, res = response) => {
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try {
+        const hospital = await Hospital.findById( id );
+
+        if( !hospital ) {
+           return res.status(404).json({
+                ok: false,
+                msg: 'Hospital no encontrado dado el id!'
+            });
+        }
+
+        /* Construimos el hospital a actualizar */
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid
+        }
+
+        /* Actualizamos el hospital, se manda id, el objeto actualizado y el que mostrara como respuesta*/
+        const hospitalActualizado = await Hospital.findByIdAndUpdate( id, cambiosHospital, { new: true } );
+
+        res.status(200).json({
+            ok: true,
+            hospital: hospitalActualizado
+        });
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, revisar logs!'
+        })
+    }
+
+    
 }
 
 const deleteHospital = (req, res = response) => {
