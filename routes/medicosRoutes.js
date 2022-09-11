@@ -22,9 +22,14 @@ router.post( '/', [
 ], postPhysician );
 
 /* PUT: Ruta | Controlador */
-router.put( '/:id', [], putPhysician );
+router.put( '/:id', [
+    validarJWT,
+    check('nombre', 'El nombre del médico es obligatorio!').not().isEmpty(),
+    check('hospital', 'El hospital id debe ser válido!').isMongoId(),
+    validarCampos
+], putPhysician );
 
 /* DELETE: Ruta */
-router.delete( '/:id', deletePhysician );
+router.delete( '/:id', validarJWT, deletePhysician );
 
 module.exports = router;
