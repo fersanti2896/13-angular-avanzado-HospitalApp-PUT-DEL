@@ -66,6 +66,10 @@ const googleSignIn = async(req, res = response) => {
         } else {
             usuario = usuarioDB;
             usuario.google = true;
+
+            if ( !usuario.img ) {
+                usuario.img = picture;
+            }
         }
 
         /* Se guarda el usuario */
