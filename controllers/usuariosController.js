@@ -4,6 +4,11 @@ const Usuario = require('../models/usuario');
 const bcryptjs = require('bcryptjs');
 const { generarJWT } = require('../helpers/jwt');
 
+/**
+ * Función que obtiene un listado de usuario
+ * @param {*} req Data Ejemplo: Número de paginación
+ * @param {*} res Respuesta del servidor
+ */
 const getUsers = async(req, res = response) => {
     const desde = Number( req.query.desde ) || 0;
 
@@ -28,6 +33,11 @@ const getUsers = async(req, res = response) => {
     });
 }
 
+/**
+ * Función que agrega un usuario
+ * @param {*} req Data del usuario | Ejemplo: Nombre, Email, etc.
+ * @param {*} res Respuesta del servidor
+ */
 const postUser = async(req, res = response) => {
     /* Leyendo el body */
     const { nombre, password, email } = req.body;
@@ -70,6 +80,11 @@ const postUser = async(req, res = response) => {
     }   
 }
 
+/**
+ * Función que actualiza un usuario
+ * @param {*} req Data del usuario | Ejemplo: Nombre, Email, etc.
+ * @param {*} res Respuesta del servidor
+ */
 const putUser = async( req, res = response ) => {
     const uid = req.params.id;
 
@@ -99,8 +114,16 @@ const putUser = async( req, res = response ) => {
             }
         }
 
-        campos.email = email;
-
+        /* Valida si el email no es de Google */
+        if ( !usuarioDB.google ) {
+            campos.email = email;
+        } else if( usuarioDB.email !== email ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario de Google no puede cambiar su correo'
+            });
+        }
+        
         const usuarioActualizado = await Usuario.findByIdAndUpdate( uid, campos, { new: true } );
 
         res.json({
@@ -116,6 +139,11 @@ const putUser = async( req, res = response ) => {
     }
 }
 
+/**
+ * Función que eliminar un usuario
+ * @param {*} req Data del usuario | Ejemplo: Uid
+ * @param {*} res Respuesta del servidor
+ */
 const deleteUser = async( req, res = response ) => {
     const uid = req.params.id;
 
